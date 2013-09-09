@@ -1,55 +1,50 @@
 Ext.define('Example.view.Main', {
-    extend: 'Ext.Container',
+    extend: 'Ext.tab.Panel',
     xtype: 'main',
     requires: [
         'Ext.TitleBar',
-        'Ext.form.FieldSet',
-        'Ext.field.Url',
         'Ext.ux.WebRTC'
     ],
     config: {
-        layout: 'vbox',
-        pack: 'center',
-        items: [
+        tabBarPosition: 'bottom',
+
+        items         : [
             {
-                xtype : 'titlebar',
-                title : 'Web RTC Example',
-                docked: 'top'
-            },
-            {
-                xtype: 'webrtc'
-            },
-            {
-                xtype: 'fieldset',
-                title: 'Waiting for someone to join:',
-                items: [
+                title     : 'video',
+                iconCls   : 'video',
+
+                scrollable: 'vertical',
+
+                items     : [
                     {
-                        xtype: 'urlfield',
-                        name: 'go'
+                        docked: 'top',
+                        xtype : 'titlebar',
+                        title : 'WebRTC DEMO'
+                    },
+
+                    /** Video stream **/
+                    {
+                        xtype: 'webrtc'
+                    },
+
+                    /** Use Canvas with monochrome effect **/
+                    // {
+                    //     xtype    : 'webrtc',
+                    //     useEffect: true,
+                    //     effectFn : 'monochrome'
+                    // },
+
+                    {
+                        xtype  : 'button',
+                        text   : 'End',
+                        ui     : 'decline',
+                        margin : '5% 10%',
+                        width  : '80%',
+                        iconCls: 'video'
                     }
                 ]
-            },
-            {
-                xtype : 'button',
-                ui    : 'confirm',
-                text  : 'Connect',
-                margin: '0 10'
             }
-        ],
-        control: {
-            'button': {
-                'tap': 'onTapConnectButton'
-            }
-        }
-    },
-
-    onTapConnectButton: function () {
-        var me = this,
-            webrtc = me.down('webrtc'),
-            src = me.down('urlfield').getValue();
-
-        webrtc.setSrc(src);
-        webrtc.connect();
+        ]
     }
 
 });

@@ -1,16 +1,65 @@
 /**
  * @class Ext.ux.WebRTC
  * @extends Ext.Component
+ * Custom component which wrapped WebRTC APIs for Sencha Touch 2.
+ *
+ * ## Notes
+ *
+ * - This component works fine on Chrome for Android only.
+ *
+ * ## Example
+ *
+ *     var panel = Ext.create('Ext.Panel', {
+ *         fullscreen: true,
+ *         items: [
+ *             {
+ *                 xtype    : 'webrtc',
+ *                 useEffect: true,
+ *                 effectFn : 'monochrome'
+ *             }
+ *         ]
+ *     });
  */
 Ext.define('Ext.ux.WebRTC', {
     extend: 'Ext.Component',
     xtype : 'webrtc',
 
     config: {
+        /**
+         * @cfg {Boolean} useVideo
+         * @accessor
+         */
         useVideo : true,
-        useAudio : true,
-        useEffect: true,
-        effectFn : Ext.emptyFn
+
+        /**
+         * @cfg {Boolean} useAudio
+         * @accessor
+         */
+        useAudio : false,
+
+        /**
+         * @cfg {Boolean} useEffect
+         * @accessor
+         */
+        useEffect: false,
+
+        /**
+         * @cfg {String|Function} effectFn
+         * @accessor
+         */
+        effectFn : '',
+
+        /**
+         * @cfg {Number} canvasFps
+         * @accessor
+         */
+        canvasFps: 10,
+
+        /**
+         * @cfg {String} errorText
+         * @accessor
+         */
+        errorText: "We're sorry, we cannot got your video camera."
     },
 
     template: [
@@ -23,8 +72,7 @@ Ext.define('Ext.ux.WebRTC', {
         {
             tag      : 'img',
             reference: 'img',
-            classList: [Ext.baseCSSPrefix + 'img'],
-            style    : 'width:100%;height:100%'
+            classList: [Ext.baseCSSPrefix + '-webrtc-img']
         },
         {
             tag      : 'canvas',
@@ -36,69 +84,119 @@ Ext.define('Ext.ux.WebRTC', {
     initialize: function() {
         var me = this;
         me.callParent();
-        me.successFn = Ext.bind(me.onGetUserMedia, me);
-        me.failureFn = Ext.bind(me.onFailureGetUserMedia, me);
 
-        var useEffect = me.getUseEffect();
-        me.media.setVisible(!useEffect);
-        me.img.setVisible(useEffect);
+        var successFn = Ext.bind(me.onGetUserMedia, me);
+        var failureFn = Ext.bind(me.onFailureGetUserMedia, me);
 
         navigator.webkitGetUserMedia({
             video: me.getUseVideo(),
             audio: me.getUseAudio()
-        }, me.successFn, me.failureFn);
+        }, successFn, failureFn);
     },
 
+    updateUseEffect: function(useEffect) {
+        var me = this;
+        me.media.setVisible(!useEffect);
+        me.img.setVisible(useEffect);
+    },
+
+    /**
+     * @private
+     * @param  {} stream
+     */
     onGetUserMedia: function (stream) {
         var me = this,
             media = me.media.dom;
 
         media.src = URL.createObjectURL(stream);
-        media.play();
 
-        if (me.getUseEffect()) {
-            me.draw();
-        }
+        setTimeout(function() {
+            media.play();
+            if (me.getUseEffect()) {
+                me.draw();
+            }
+        });
     },
 
+    /**
+     * @private
+     * @param  {} stream
+     */
     onFailureGetUserMedia: function (error) {
-        alert('error');
+        var me = this,
+            tpl = new Ext.Template('<div style="text-align:center;color:#e74c3c">{0}</div>'),
+            html = tpl.apply([me.getErrorText()]);
+        me.setHtml(html);
     },
 
+    /**
+     * @private
+     */
     draw: function () {
         var me = this;
         me.ctx = me.canvas.dom.getContext('2d');
 
+        var fps = 1000 / me.getCanvasFps();
         setInterval(function () {
-            me.streamToImage(me.getEffectFn());
-        }, 200);
+            var fn = me.effectFnFactory(me.getEffectFn());
+            me.streamToImage(fn);
+        }, fps);
     },
 
+    /**
+     * @private
+     * @param  {String|Function} effectFn
+     * @return {Function}
+     */
+    effectFnFactory: function(effectFn) {
+        if (!Ext.isString(effectFn)) {
+            return effectFn;
+        }
+
+        var me = this;
+        switch (effectFn) {
+            case 'monochrome':
+                return me.toMonochromeFn;
+            default:
+                return Ext.emptyFn;
+        }
+    },
+
+    /**
+     * @private
+     * @param  {Function} effectFn
+     */
     streamToImage: function (effectFn) {
-        var me = this,
+        var me     = this,
             media  = me.media.dom,
             img    = me.img.dom,
             canvas = me.canvas.dom,
             ctx    = me.ctx,
-            width  = me.getWidth() || 400,
-            height = me.getHeight() || 500;
+            width  = media.width  || 380,
+            height = media.height || 300;
+
+        img.width = width;
+        img.height = height;
 
         var canvasImage = ctx.drawImage(media, 0, 0, width, height);
         canvasImage = ctx.getImageData(0, 0, width, height);
         effectFn(canvasImage.data);
-        // me.sampleEffectFn(canvasImage.data);
         ctx.putImageData(canvasImage, 0, 0);
 
         var dataURL = canvas.toDataURL("image/octet-stream");
         img.src = dataURL;
     },
 
-    sampleEffectFn: function (pixel) {
+    /**
+     * @private
+     * @param  {} pixel
+     */
+    toMonochromeFn: function (pixel) {
         for (var i = 0, n = pixel.length; i < n; i += 4) {
             var gr = pixel[i] * 0.2 + pixel[i+1] * 0.2 + pixel[i+2] * 0.2;
-            pixel[i  ] = gr; //R
-            pixel[i+1] = gr; //G
-            pixel[i+2] = gr; //B
+            pixel[i  ] = gr;  //R
+            pixel[i+1] = gr;  //G
+            pixel[i+2] = gr;  //B
         }
     }
 
