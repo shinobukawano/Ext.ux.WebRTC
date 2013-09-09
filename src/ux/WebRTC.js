@@ -88,6 +88,11 @@ Ext.define('Ext.ux.WebRTC', {
         var successFn = Ext.bind(me.onGetUserMedia, me);
         var failureFn = Ext.bind(me.onFailureGetUserMedia, me);
 
+        if (Ext.isEmpty(navigator.webkitGetUserMedia)) {
+            failureFn();
+            return;
+        }
+
         navigator.webkitGetUserMedia({
             video: me.getUseVideo(),
             audio: me.getUseAudio()
@@ -126,7 +131,12 @@ Ext.define('Ext.ux.WebRTC', {
         var me = this,
             tpl = new Ext.Template('<div style="text-align:center;color:#e74c3c">{0}</div>'),
             html = tpl.apply([me.getErrorText()]);
+
         me.setHtml(html);
+
+        me.media.setVisible(false);
+        me.img.setVisible(false);
+        me.setMargin('5%');
     },
 
     /**
