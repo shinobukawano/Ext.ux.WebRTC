@@ -4,6 +4,10 @@ Custom component which wrapped WebRTC APIs for Sencha Touch 2.
 
 <img src="https://raw.github.com/kawanoshinobu/Ext.ux.WebRTC/master/image1.png" width="30%"/>
 
+## Demo
+
+- [Ext.ux.WebRTC Example](http://kawanoshinobu.com/apps/webrtc)
+
 ## Note
 
 This component works fine on Chrome for Android only.
