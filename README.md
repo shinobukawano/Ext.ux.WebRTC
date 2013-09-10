@@ -12,7 +12,7 @@ Custom component which wrapped WebRTC APIs for Sencha Touch 2.
 
 ### Usage
 
-1. Simply, if you want to output camera stream to the web page,
+Simply, if you want to output camera stream to the web page,
 
     {
         xtype: 'webrtc'
@@ -30,7 +30,7 @@ If it cannot got it, shows error message.
 
 <img src="https://raw.github.com/kawanoshinobu/Ext.ux.WebRTC/master/image3.png" width="30%"/>
 
-2. if you want to effect stream,
+if you want to effect stream,
 
     {
         xtype    : 'webrtc',
