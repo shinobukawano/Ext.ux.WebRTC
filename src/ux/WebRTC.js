@@ -81,6 +81,8 @@ Ext.define('Ext.ux.WebRTC', {
         }
     ],
 
+    /**
+     */
     initialize: function() {
         var me = this;
         me.callParent();
@@ -99,6 +101,8 @@ Ext.define('Ext.ux.WebRTC', {
         }, successFn, failureFn);
     },
 
+    /**
+     */
     updateUseEffect: function(useEffect) {
         var me = this;
         me.media.setVisible(!useEffect);
@@ -107,7 +111,7 @@ Ext.define('Ext.ux.WebRTC', {
 
     /**
      * @private
-     * @param  {} stream
+     * @param  {LocalMediaStream} stream
      */
     onGetUserMedia: function (stream) {
         var me = this,
@@ -125,7 +129,7 @@ Ext.define('Ext.ux.WebRTC', {
 
     /**
      * @private
-     * @param  {} stream
+     * @param  {LocalMediaStream} stream
      */
     onFailureGetUserMedia: function (error) {
         var me = this,
@@ -199,7 +203,7 @@ Ext.define('Ext.ux.WebRTC', {
 
     /**
      * @private
-     * @param  {} pixel
+     * @param  {ImageData.data} pixel
      */
     toMonochromeFn: function (pixel) {
         for (var i = 0, n = pixel.length; i < n; i += 4) {

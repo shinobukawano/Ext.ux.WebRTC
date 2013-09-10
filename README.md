@@ -2,19 +2,45 @@
 
 Custom component which wrapped WebRTC APIs for Sencha Touch 2.
 
-<img src="https://raw.github.com/kawanoshinobu/Ext.ux.WebRTC/master/image1.png" width="30%"/>
+[![1](Logo-webrtc.png)](https://raw.github.com/kawanoshinobu/Ext.ux.AccordionList/master/Logo-webrtc.png)
 
 ## Demo
 
 - [Ext.ux.WebRTC Example](http://kawanoshinobu.com/apps/webrtc)
 
-## Note
+## Getting Started
 
-This component works fine on Chrome for Android only.
+### Usage
+
+1. Simply, if you want to output camera stream to the web page,
+
+    {
+        xtype: 'webrtc'
+    }
+
+that's all. You open the page, then it shows the message to permit to use the device camera, please go ahead.
+
+<img src="https://raw.github.com/kawanoshinobu/Ext.ux.WebRTC/master/image1.png" width="30%"/>
+
+If it got the stream, display it to the web page.
+
+<img src="https://raw.github.com/kawanoshinobu/Ext.ux.WebRTC/master/image2.png" width="30%"/>
+
+If it cannot got it, shows error message.
 
 <img src="https://raw.github.com/kawanoshinobu/Ext.ux.WebRTC/master/image3.png" width="30%"/>
 
-## Getting Started
+2. if you want to effect stream,
+
+    {
+        xtype    : 'webrtc',
+        useEffect: true,
+        effectFn : 'monochrome'
+    }
+
+`useEffect` option changes the way of display, stream will be outputted by canvas (Normally, it use with video tag). `effectFn` option define function object or effect name which offered by component. If you define `monochrome`, it outputs the stream with monochrome effect.
+
+<img src="https://raw.github.com/kawanoshinobu/Ext.ux.WebRTC/master/image4.png" width="30%"/>
 
 ### Initialization
 
@@ -45,6 +71,11 @@ Execute the following command in the sources root directory
     sencha ant -f project.xml initialize
 
 Then to place example directory to server's application directory.
+
+## Note
+
+This component works fine on Chrome for Android only.
+
 
 ## Version
 
