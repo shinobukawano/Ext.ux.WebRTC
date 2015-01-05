@@ -6,7 +6,7 @@ Custom component which wrapped WebRTC APIs for Sencha Touch 2.
 
 ## Demo
 
-- [Ext.ux.WebRTC Example](http://kawanoshinobu.com/public/demo/webrtc/)
+- [Ext.ux.WebRTC Example](http://kawanoshinobu.github.io/Ext.ux.WebRTC/)
 
 ## Getting Started
 
